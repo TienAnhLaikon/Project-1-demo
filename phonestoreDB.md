@@ -92,7 +92,6 @@ address VARCHAR(50)
 INSERT INTO customers(name, phone_number, address) VALUE('Yua Mikami', '0254136578', 'Quat Lam');
 INSERT INTO customers(name, phone_number, address) VALUE('Erichio Masharo', '0254136548', 'Quat Lam');
 
-
 delimiter $$
 create procedure sp_createCustomer(
 IN customerPhone VARCHAR(15), 
@@ -128,9 +127,9 @@ FOREIGN KEY(brand_id) REFERENCES brands(brand_id),
 FOREIGN KEY(create_by) REFERENCES staffs(staff_id)
 )engine = InnoDB;
 
-INSERT INTO phones(phone_id, phone_name, brand_id, weight, battery_capacity, sim_slot,screen, release_date, create_by) 
+INSERT INTO phones(phone_id, phone_name, brand_id, weight, battery_capacity, sim_slot,screen, release_date, create_by)
 VALUE('0','default', '2', 'default', 'default', '1','default', '1998-12-12', '1');
-INSERT INTO phones(phone_id, phone_name, brand_id, weight, battery_capacity, sim_slot,screen, release_date, create_by) 
+INSERT INTO phones(phone_id, phone_name, brand_id, weight, battery_capacity, sim_slot,screen, release_date, create_by)
 VALUE('1','Nokia 1280', '2', '250g', '1080mAh', '1','500x200', '1998-12-12', '1');
 INSERT INTO phones (phone_id, phone_name, brand_id, weight, battery_capacity, sim_slot,screen, release_date, create_by)
 VALUE ('2', 'Iphone 11', '1', '194 grams', '3,110 mAh', '2', '828 x 1792','2019-09-20', '1');
@@ -315,7 +314,6 @@ FOREIGN KEY (phone_imei) REFERENCES imeis(phone_imei),
 constraint unique(order_id, phone_imei)
 )engine = InnoDB;
 
-
 DELIMITER $$
 CREATE TRIGGER after_insert_on_orderdetails AFTER INSERT ON OrderDetails
 FOR EACH ROW
@@ -341,17 +339,15 @@ begin
 declare phoneimei varchar(15);
 
 select i.phone_imei into phoneimei from imeis i
-inner join orderdetails od on i.phone_imei = od.phone_imei 
+inner join orderdetails od on i.phone_imei = od.phone_imei
 where i.phone_imei = new.phone_imei;
 
-if(new.status != old.status and new.status = 0) then 
+if(new.status != old.status and new.status = 0) then
 update phonedetails set quantity = quantity+1 where phone_detail_id = new.phone_detail_id;
 delete from orderdetails where phone_imei = phoneimei;
 end if;
 end$$
 delimiter ;
-
-
 
 CREATE TABLE discountpolicies(
 -- thong tin co ban cua discount
@@ -365,7 +361,7 @@ payment_method VARCHAR(20) default 'Not Have', -- should be updated later
 maximum_purchase_amount DECIMAL default 0,
 minimum_purchase_amount DECIMAL default 0,
 discount_price DECIMAL default 0,
-discount_rate DECIMAL default 0, 
+discount_rate DECIMAL default 0,
 -- discount theo chinh sach thu cu
 phone_detail_id INT default '0',
 money_supported DECIMAL default 0,
@@ -401,11 +397,11 @@ FOREIGN KEY (policy_id) REFERENCES discountpolicies(policy_id),
 FOREIGN KEY (order_id) REFERENCES orders(order_id)
 )engine = InnoDB;
 
--- SELECT P.*, PD.*, I.* FROM orders O
---                 INNER JOIN orderdetails OD ON O.order_id = OD.order_id
---                 INNER JOIN imeis I ON I.phone_imei = OD.phone_imei
---                 INNER JOIN phonedetails PD ON I.phone_detail_id = PD.phone_detail_id
---                 INNER JOIN phones P ON PD.phone_id = P.phone_id
+-- SELECT P._, PD._, I.\* FROM orders O
+-- INNER JOIN orderdetails OD ON O.order_id = OD.order_id
+-- INNER JOIN imeis I ON I.phone_imei = OD.phone_imei
+-- INNER JOIN phonedetails PD ON I.phone_detail_id = PD.phone_detail_id
+-- INNER JOIN phones P ON PD.phone_id = P.phone_id
 INSERT INTO Orders(order_id, seller_id, accountant_id, customer_id, create_at, order_status) VALUES ('A798EC16225E', 3, 2, 1, STR_TO_DATE("08-01-2023 16:40:10", "%m-%d-%Y %H:%i:%s"), 3);
 INSERT INTO Orders(order_id, seller_id, accountant_id, customer_id, create_at, order_status) VALUES ('D2BD913A83B4', 2, 2, 2, STR_TO_DATE("08-02-2023 17:40:10", "%m-%d-%Y %H:%i:%s"), 3);
 INSERT INTO Orders(order_id, seller_id, accountant_id, customer_id, create_at, order_status) VALUES ('D2B3233A83B4', 2, 3, 2, STR_TO_DATE("07-31-2023 15:40:10", "%m-%d-%Y %H:%i:%s"), 3);
@@ -419,7 +415,6 @@ INSERT INTO OrderDetails(order_id, phone_imei) VALUES ('D2BD913A83B4', 378541254
 INSERT INTO OrderDetails(order_id, phone_imei) VALUES ('D2B3233A83B4', 378541254259891);
 INSERT INTO OrderDetails(order_id, phone_imei) VALUES ('P2B1222A83T2', 378541254259121);
 
-
--- CREATE AN SUB ACCOUNT TO DATABASE 
+-- CREATE AN SUB ACCOUNT TO DATABASE
 CREATE USER IF NOT exists 'something'@'localhost' IDENTIFIED BY '123456';
-GRANT ALL PRIVILEGES ON phonestore.* TO 'something'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON phonestore.\* TO 'something'@'localhost' WITH GRANT OPTION;
